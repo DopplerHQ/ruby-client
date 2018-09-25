@@ -1,7 +1,6 @@
 # Doppler Ruby Library
 
 [![image](https://img.shields.io/gem/v/doppler-client.svg)](https://rubygems.org/gems/doppler-client)
-[![image](https://img.shields.io/gem/dm/doppler-client.svg)](https://rubygems.org/gems/doppler-client)
 
 The Doppler Ruby library provides convenient access to the Doppler API from
 applications written for **only** server-side code.
