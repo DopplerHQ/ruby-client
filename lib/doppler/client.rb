@@ -1,6 +1,7 @@
 require "doppler/client/version"
 require 'net/https'
 require 'json'
+require 'set'
 
 module Doppler
   class Priority
@@ -21,24 +22,37 @@ module Doppler
     @@environ_segment = '/environments/'
     @@max_retries = 0
 
-    def initialize(api_key, pipeline, environment, priority = Priority.remote)
+    def initialize(api_key, pipeline, environment, priority = Priority.remote, send_local_keys = true, ignore_keys = [])
         raise ArgumentError, 'api_key not string' unless api_key.is_a? String
         raise ArgumentError, 'pipeline not string' unless pipeline.is_a? String
         raise ArgumentError, 'api_key not string' unless environment.is_a? String
-        raise ArgumentError, 'api_key not numeric' unless priority.is_a? Numeric 
+        raise ArgumentError, 'priority not numeric' unless priority.is_a? Numeric 
 
         @api_key = api_key
         @pipeline = pipeline
         @environment = environment
         @default_priority = priority
+        @send_local_keys = send_local_keys
+        @ignore_keys = ignore_keys.to_set
         @host = ENV[@@host_key] ? ENV[@@host_key] : @@default_host
         
         startup()
     end
 
     def startup
+        keys_to_send = {}
+        local_keys = ENV.to_hash
+        
+        if @send_local_keys
+            local_keys.each do |key, value|                
+                if not @ignore_keys.include?(key)
+                    keys_to_send[key] = value
+                end  
+            end
+        end
+        
         resp = self._request('/fetch_keys', {
-            'local_keys' => ENV.to_hash
+            'local_keys' => keys_to_send
         })
 
         @remote_keys = resp['keys']
@@ -54,10 +68,12 @@ module Doppler
                 return @remote_keys[key_name]
             end
         end
-
-        _request('/missing_key', {
-            'key_name' => key_name
-        })
+        
+        if not @ignore_keys.include?(key_name)
+            _request('/missing_key', {
+                'key_name' => key_name
+            })
+        end
 
         return ENV[key_name]
     end
