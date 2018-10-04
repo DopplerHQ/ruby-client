@@ -4,12 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 Gem::Specification.new do |spec|
   spec.name          = "doppler-client"
   spec.version       = "0.1.1"
-  spec.authors       = "Doppler Team"
+  spec.authors       = ["Doppler Team"]
   spec.email         = "brian@doppler.market"
 
   spec.summary       = "The official Doppler Ruby client."
   spec.description   = "Doppler helps you manage your API keys and secrets across all your projects. See https://doppler.market for details."
   spec.homepage      = "https://github.com/DopplerHQ/ruby-client"
+  spec.licenses      = "Apache-2.0"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
