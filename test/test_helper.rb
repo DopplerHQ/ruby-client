@@ -5,7 +5,7 @@ require "minitest/autorun"
 ENV['TESTER'] = "4567"
 
 doppler = Doppler::Client.new(
-  api_key = "RbZ7vIrfbOkZF6hDMKDDdhVoYA0AzBqL8An9OAOL",
+  api_key = "lK1obsC3Q1atBqAw5AoqXmLDXC77eigYqFZOlVz2",
   pipeline = "31",
   environment = "development_ruby",
   priority = Doppler::Priority.remote,
