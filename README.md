@@ -28,7 +28,6 @@ doppler = Doppler::Client.new(
 # Rest of Application
 ```
 
-
 ## Key Best Practices
 
 So if Doppler stores my environment keys, where should I keep my Doppler API keys?
@@ -54,7 +53,6 @@ config = {
 }
 
 ```
-
 
 If there are differences between the values your local environment sets and the ones on Doppler, the client will use the ones provided by Doppler. You can override this behavior by passing in a second argument to the `get(key_name, priority)` method that sets the priority to favor your local environment.
 
@@ -87,7 +85,6 @@ doppler = Doppler::Client.new(
 
 ```
 
-
 ## Local Key Privacy
 
 By default the Doppler client will only track the local environment keys that are used during `doppler.get()`.
@@ -111,7 +108,6 @@ doppler = Doppler::Client.new(
 )
 ```
 
-
 ### Ignoring Specific Keys
 Inversely, you can also ignore specific local keys by adding them to the `ignore_keys` array.
 
@@ -127,7 +123,6 @@ doppler = Doppler::Client.new(
   ]
 )
 ```
-
 
 ## Extra Information
 

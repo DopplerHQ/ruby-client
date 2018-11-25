@@ -4,22 +4,22 @@ require 'set'
 
 module Doppler
   class Priority
-    @@local = 0
+    @local = 0
     def self.local
         @@local
     end
 
-    @@remote = 1
+    @remote = 1
     def self.remote
         @@remote
     end
   end
 
   class Client
-    @@host_key = 'DOPPLER_HOST'
-    @@default_host = 'https://api.doppler.market'
-    @@environ_segment = '/environments/'
-    @@max_retries = 0
+    @host_key = 'DOPPLER_HOST'
+    @default_host = 'https://api.doppler.market'
+    @environ_segment = '/environments/'
+    @max_retries = 0
 
     def initialize(api_key, pipeline, environment, priority = Priority.remote, track_keys = [], ignore_keys = [])
         raise ArgumentError, 'api_key not string' unless api_key.is_a? String
@@ -60,7 +60,7 @@ module Doppler
     end
 
     def get(key_name, priority = nil)
-        priority = priority != nil ? priority : @default_priority
+        priority = priority.nil? ? @default_priority : priority
         value = nil
         
         if priority == Priority.local
@@ -69,8 +69,8 @@ module Doppler
             value = @remote_keys[key_name] ? @remote_keys[key_name] : ENV[key_name]
         end
         
-        if not @ignore_keys.include?(key_name)
-              if value != nil
+        unless @ignore_keys.include?(key_name)
+              if !value.nil?
                 if ENV[key_name] != @remote_keys[key_name]
                     local_keys = {}
                     local_keys[key_name] = ENV[key_name]
