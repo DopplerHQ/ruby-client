@@ -1,9 +1,11 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require "doppler/version"
+
 Gem::Specification.new do |spec|
   spec.name          = "doppler-client"
-  spec.version       = "0.1.2"
+  spec.version       = Doppler::VERSION
   spec.authors       = ["Doppler Team"]
   spec.email         = "brian@doppler.market"
 

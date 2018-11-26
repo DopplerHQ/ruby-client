@@ -2,24 +2,25 @@ require 'net/https'
 require 'json'
 require 'set'
 
+require "doppler/version"
+
 module Doppler
   class Priority
     @local = 0
     def self.local
-        @@local
+        @local
     end
 
     @remote = 1
     def self.remote
-        @@remote
+        @remote
     end
   end
 
   class Client
-    @host_key = 'DOPPLER_HOST'
-    @default_host = 'https://api.doppler.market'
-    @environ_segment = '/environments/'
-    @max_retries = 0
+    @@default_host = 'https://api.doppler.market'
+    @@environ_segment = '/environments/'
+    @@max_retries = 10
 
     def initialize(api_key, pipeline, environment, priority = Priority.remote, track_keys = [], ignore_keys = [])
         raise ArgumentError, 'api_key not string' unless api_key.is_a? String
@@ -35,8 +36,8 @@ module Doppler
         @default_priority = priority
         @track_keys = track_keys.to_set
         @ignore_keys = ignore_keys.to_set
-        @host = ENV[@@host_key] ? ENV[@@host_key] : @@default_host
-        
+        @host = ENV['DOPPLER_HOST'].nil? ? @@default_host : ENV['DOPPLER_HOST']
+                
         startup()
     end
 
@@ -98,7 +99,9 @@ module Doppler
         header = {
             'Content-Type': 'application/json',
             'api-key': @api_key,
-            'pipeline': @pipeline
+            'pipeline': @pipeline,
+            'client-sdk': 'ruby',
+            'client-version': Doppler::VERSION
 
         }
         http = Net::HTTP.new(uri.host, uri.port)
