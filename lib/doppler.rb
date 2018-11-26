@@ -18,9 +18,6 @@ module Doppler
   end
 
   class Client
-    @@default_host = 'https://api.doppler.market'
-    @@environ_segment = '/environments/'
-    @@max_retries = 10
 
     def initialize(api_key, pipeline, environment, priority = Priority.remote, track_keys = [], ignore_keys = [])
         raise ArgumentError, 'api_key not string' unless api_key.is_a? String
@@ -36,7 +33,10 @@ module Doppler
         @default_priority = priority
         @track_keys = track_keys.to_set
         @ignore_keys = ignore_keys.to_set
-        @host = ENV['DOPPLER_HOST'].nil? ? @@default_host : ENV['DOPPLER_HOST']
+        @max_retries = 10
+        @environ_segment = '/environments/'
+        @default_host = 'https://api.doppler.market'
+        @host = ENV['DOPPLER_HOST'].nil? ? @default_host : ENV['DOPPLER_HOST']
                 
         startup()
     end
@@ -94,7 +94,7 @@ module Doppler
     def _request(endpoint, body, retry_count=0)
         raise ArgumentError, 'endpoint not string' unless endpoint.is_a? String
 
-        raw_url = @host + @@environ_segment + @environment + endpoint
+        raw_url = @host + @environ_segment + @environment + endpoint
         uri = URI.parse(raw_url)
         header = {
             'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ module Doppler
         rescue => e
             retry_count += 1
 
-            if retry_count > @@max_retries
+            if retry_count > @max_retries
                 raise e
             else
                 return _request(endpoint, body, retry_count)
