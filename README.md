@@ -1,6 +1,7 @@
 # Doppler Ruby Library
 
 [![image](https://img.shields.io/gem/v/doppler-client.svg)](https://rubygems.org/gems/doppler-client)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/92ec3d37764c40da8dffb6a85c6cbfa4)](https://www.codacy.com/app/Doppler/ruby-client?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DopplerHQ/ruby-client&amp;utm_campaign=Badge_Grade)
 
 The Doppler Ruby library provides convenient access to the Doppler API from
 applications written for **only** server-side code.
