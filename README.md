@@ -35,7 +35,6 @@ So if Doppler stores my environment keys, where should I keep my Doppler API key
 That is a great question! We recommend storing your `API_KEY`, `PIPELINE_ID`, and `ENVIRONMENT_NAME` 
 in local environment. That means the only keys you should be storing in your local environment are the Doppler keys. All other keys should be be fetched by the Doppler client.
 
-
 ### Fetch Environment Keys
 
 You can fetch your environment keys from Doppler by calling the `get(name)` method.
@@ -128,4 +127,3 @@ doppler = Doppler::Client.new(
 
 - [Doppler](https://doppler.market)
 - [API KEY](https://doppler.market/workplace/api_key)
-
