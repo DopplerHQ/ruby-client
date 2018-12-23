@@ -7,10 +7,10 @@ Gem::Specification.new do |spec|
   spec.name          = "doppler-client"
   spec.version       = Doppler::VERSION
   spec.authors       = ["Doppler Team"]
-  spec.email         = "brian@doppler.market"
+  spec.email         = "brian@doppler.com"
 
   spec.summary       = "The official Doppler Ruby client."
-  spec.description   = "Doppler helps you manage your API keys and secrets across all your projects. See https://doppler.market for details."
+  spec.description   = "Doppler helps you manage your API keys and secrets across all your projects. See https://doppler.com for details."
   spec.homepage      = "https://github.com/DopplerHQ/ruby-client"
   spec.licenses      = "Apache-2.0"
 

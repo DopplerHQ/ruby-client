@@ -35,7 +35,7 @@ module Doppler
         @ignore_keys = ignore_keys.to_set
         @max_retries = 10
         @environ_segment = '/environments/'
-        @default_host = 'https://api.doppler.market'
+        @default_host = 'https://api.doppler.com'
         @host = ENV['DOPPLER_HOST'].nil? ? @default_host : ENV['DOPPLER_HOST']
                 
         startup()
