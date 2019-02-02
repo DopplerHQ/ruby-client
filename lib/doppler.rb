@@ -23,9 +23,9 @@ module Doppler
         raise ArgumentError, 'api_key not string' unless api_key.is_a? String
         raise ArgumentError, 'pipeline not string' unless pipeline.is_a? String
         raise ArgumentError, 'api_key not string' unless environment.is_a? String
-        raise ArgumentError, 'priority not numeric' unless priority.is_a? Numeric 
-        raise ArgumentError, 'track_keys not array' unless track_keys.is_a? Array 
-        raise ArgumentError, 'ignore_keys not array' unless ignore_keys.is_a? Array 
+        raise ArgumentError, 'priority not numeric' unless priority.is_a? Numeric
+        raise ArgumentError, 'track_keys not array' unless track_keys.is_a? Array
+        raise ArgumentError, 'ignore_keys not array' unless ignore_keys.is_a? Array
 
         @api_key = api_key
         @pipeline = pipeline
@@ -37,22 +37,22 @@ module Doppler
         @environ_segment = '/environments/'
         @default_host = 'https://api.doppler.com'
         @host = ENV['DOPPLER_HOST'].nil? ? @default_host : ENV['DOPPLER_HOST']
-                
+
         startup()
     end
 
     def startup
         keys_to_send = {}
         local_keys = ENV.to_hash
-        
+
         if @send_local_keys
-            local_keys.each do |key, value|                
+            local_keys.each do |key, value|
                 if @track_keys.include?(key)
                     keys_to_send[key] = value
-                end  
+                end
             end
         end
-        
+
         resp = self._request('/fetch_keys', {
             'local_keys' => keys_to_send
         })
@@ -63,19 +63,19 @@ module Doppler
     def get(key_name, priority = nil)
         priority = priority.nil? ? @default_priority : priority
         value = nil
-        
+
         if priority == Priority.local
             value = ENV[key_name] ? ENV[key_name] : @remote_keys[key_name]
         else
             value = @remote_keys[key_name] ? @remote_keys[key_name] : ENV[key_name]
         end
-        
+
         unless @ignore_keys.include?(key_name)
               if !value.nil?
                 if ENV[key_name] != @remote_keys[key_name]
                     local_keys = {}
                     local_keys[key_name] = ENV[key_name]
-                    
+
                     _request('/track_key', {
                         'local_keys' => local_keys
                     })
@@ -84,7 +84,7 @@ module Doppler
                 _request('/missing_key', {
                     'key_name' => key_name
                 })
-                
+
             end
         end
 
