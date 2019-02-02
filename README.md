@@ -20,11 +20,15 @@ The package needs to be configured with your account's api key which is availabl
 ``` ruby
 require "doppler"
 
-doppler = Doppler::Client.new(
-  api_key = ENV["API_KEY"],
-  pipeline = ENV["PIPELINE_ID"],
-  environment = ENV["ENVIRONMENT_NAME"]
-)
+Doppler.configure do |config|
+  config.api_key = "api-key"
+  config.pipeline = "31"
+  config.environment = "development_ruby"
+  config.priority = Doppler::PRIORITY_REMOTE
+end
+
+
+doppler = Doppler::Client.new()
 
 # Rest of Application
 ```
@@ -76,13 +80,24 @@ doppler.get("MAGICAL_KEY", Doppler::Priority.local) # => "123"
 You can also set the priority globally on initialization:
 
 ``` ruby
-doppler = Doppler::Client.new(
-  api_key = ENV["API_KEY"],
-  pipeline = ENV["PIPELINE_ID"],
-  environment = ENV["ENVIRONMENT_NAME"],
-  priority = Doppler::Priority.local
-)
+Doppler.configure do |config|
+  # ...
+  config.priority = Doppler::PRIORITY_LOCAL
+end
+```
 
+## Rails integration
+
+Configure `Doppler` with keys and environments, and then you should be all good.
+Please use the following snippet in initializer folder.
+
+```rb
+Doppler.configure do |config|
+  config.api_key = "api-key"
+  config.pipeline = "31"
+  config.environment = "development_ruby"
+  config.priority = Doppler::PRIORITY_REMOTE
+end
 ```
 
 ## Local Key Privacy
@@ -97,31 +112,24 @@ through our dashboard. This can help help when debugging silent bugs or build fa
 The Doppler client can also track additional keys by providing an array of keys to the `track_keys` field.
 
 ``` ruby
-doppler = Doppler::Client.new(
-  api_key = ENV["API_KEY"],
-  pipeline = ENV["PIPELINE_ID"],
-  environment = ENV["ENVIRONMENT_NAME"],
-  priority = Doppler::Priority.local,
-  track_keys = [
+Doppler.configure do |config|
+  # ...
+  config.track_keys = [
     "KEY_TO_TRACK"
   ]
-)
+end
 ```
 
 ### Ignoring Specific Keys
 Inversely, you can also ignore specific local keys by adding them to the `ignore_keys` array.
 
 ``` ruby
-doppler = Doppler::Client.new(
-  api_key = ENV["API_KEY"],
-  pipeline = ENV["PIPELINE_ID"],
-  environment = ENV["ENVIRONMENT_NAME"],
-  priority = Doppler::Priority.local,
-  track_keys = [],
-  ignore_keys = [
+Doppler.configure do |config|
+  # ...
+  config.ignore_keys = [
     "SUPER_SECRET_KEY"
   ]
-)
+end
 ```
 
 ## Extra Information
