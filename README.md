@@ -29,6 +29,11 @@ doppler = Doppler::Client.new(
 # Rest of Application
 ```
 
+
+## Rails Client
+
+Example repo found [here](https://github.com/DopplerHQ/rails-sample).
+
 ## Key Best Practices
 
 So if Doppler stores my environment keys, where should I keep my Doppler API keys?
