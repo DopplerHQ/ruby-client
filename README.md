@@ -10,7 +10,7 @@ applications written for **only** server-side code.
 
 Install the gem with:
 ``` bash
-gem install doppler-client
+gem install doppler
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ gem install doppler-client
 The package needs to be configured with your account's api key which is available in your [Doppler account](https://doppler.com/workplace/api_key), pipeline identifier and the environment name:
 
 ``` ruby
-require "doppler-client"
+require "doppler"
 
 doppler = Doppler::Client.new(
   api_key = ENV["API_KEY"],
@@ -33,7 +33,7 @@ doppler = Doppler::Client.new(
 
 So if Doppler stores my environment keys, where should I keep my Doppler API keys?
 
-That is a great question! We recommend storing your `API_KEY`, `PIPELINE_ID`, and `ENVIRONMENT_NAME` 
+That is a great question! We recommend storing your `API_KEY`, `PIPELINE_ID`, and `ENVIRONMENT_NAME`
 in local environment. That means the only keys you should be storing in your local environment are the Doppler keys. All other keys should be be fetched by the Doppler client.
 
 ### Fetch Environment Keys

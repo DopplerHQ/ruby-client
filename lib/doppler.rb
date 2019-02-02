@@ -1,129 +1,92 @@
-require 'net/https'
-require 'json'
-require 'set'
-
-require "doppler/version"
+require 'doppler/client'
 
 module Doppler
-  class Priority
-    @local = 0
-    def self.local
-        @local
-    end
-
-    @remote = 1
-    def self.remote
-        @remote
-    end
+  # configure doppler host url
+  @@host_url = "https://api.doppler.com"
+  def self.host_url=(host)
+    @@host_url = host_url
+  end
+  def self.host_url
+    @@host_url
   end
 
-  class Client
+  # configure api key
+  @@api_key = "sample-api-key"
+  def self.api_key=(api_key)
+    @@api_key = api_key
+  end
+  def self.api_key
+    @@api_key
+  end
 
-    def initialize(api_key, pipeline, environment, priority = Priority.remote, track_keys = [], ignore_keys = [])
-        raise ArgumentError, 'api_key not string' unless api_key.is_a? String
-        raise ArgumentError, 'pipeline not string' unless pipeline.is_a? String
-        raise ArgumentError, 'api_key not string' unless environment.is_a? String
-        raise ArgumentError, 'priority not numeric' unless priority.is_a? Numeric
-        raise ArgumentError, 'track_keys not array' unless track_keys.is_a? Array
-        raise ArgumentError, 'ignore_keys not array' unless ignore_keys.is_a? Array
+  # configure pipeline
+  @@pipeline = "sample-pipeline"
+  def self.pipeline=(pipeline)
+    @@pipeline = pipeline
+  end
+  def self.pipeline
+    @@pipeline
+  end
 
-        @api_key = api_key
-        @pipeline = pipeline
-        @environment = environment
-        @default_priority = priority
-        @track_keys = track_keys.to_set
-        @ignore_keys = ignore_keys.to_set
-        @max_retries = 10
-        @environ_segment = '/environments/'
-        @default_host = 'https://api.doppler.com'
-        @host = ENV['DOPPLER_HOST'].nil? ? @default_host : ENV['DOPPLER_HOST']
+  # configure environment
+  @@environment = "development_ruby"
+  def self.environment=(environment)
+    @@environment = environment
+  end
+  def self.environment
+    @@environment
+  end
 
-        startup()
-    end
+  # configure priority
+  PRIORITY_REMOTE = 0
+  PRIORITY_LOCAL = 1
+  @@priority = PRIORITY_REMOTE
+  def self.priority=(priority)
+    @@priority = priority
+  end
+  def self.priority
+    @@priority
+  end
 
-    def startup
-        keys_to_send = {}
-        local_keys = ENV.to_hash
+  # configure track keys
+  @@track_keys = []
+  def self.track_keys=(track_keys)
+    @@track_keys = track_keys
+  end
+  def self.track_keys
+    @@track_keys
+  end
 
-        if @send_local_keys
-            local_keys.each do |key, value|
-                if @track_keys.include?(key)
-                    keys_to_send[key] = value
-                end
-            end
-        end
+  # configure ignore keys
+  @@ignore_keys = []
+  def self.ignore_keys=(ignore_keys)
+    @@ignore_keys = ignore_keys
+  end
+  def self.ignore_keys
+    @@ignore_keys
+  end
 
-        resp = self._request('/fetch_keys', {
-            'local_keys' => keys_to_send
-        })
+  # configure service to be mocked so that no screenshots are
+  # taken, and uploaded to service.
+  @@enable_service = false
+  def self.enable_service=(enable)
+    @@enable_service = enable
+  end
+  def self.enable_service
+    @@enable_service
+  end
 
-        @remote_keys = resp['keys']
-    end
+  # configure logger, which will be used to log issues if any
+  @@logger = Logger.new(STDOUT)
+  def self.logger=(new_logger)
+    @@logger = new_logger
+  end
+  def self.logger
+    @@logger
+  end
 
-    def get(key_name, priority = nil)
-        priority = priority.nil? ? @default_priority : priority
-        value = nil
-
-        if priority == Priority.local
-            value = ENV[key_name] ? ENV[key_name] : @remote_keys[key_name]
-        else
-            value = @remote_keys[key_name] ? @remote_keys[key_name] : ENV[key_name]
-        end
-
-        unless @ignore_keys.include?(key_name)
-              if !value.nil?
-                if ENV[key_name] != @remote_keys[key_name]
-                    local_keys = {}
-                    local_keys[key_name] = ENV[key_name]
-
-                    _request('/track_key', {
-                        'local_keys' => local_keys
-                    })
-                end
-            else
-                _request('/missing_key', {
-                    'key_name' => key_name
-                })
-
-            end
-        end
-
-        return value
-    end
-
-    def _request(endpoint, body, retry_count=0)
-        raise ArgumentError, 'endpoint not string' unless endpoint.is_a? String
-
-        raw_url = @host + @environ_segment + @environment + endpoint
-        uri = URI.parse(raw_url)
-        header = {
-            'Content-Type': 'application/json',
-            'api-key': @api_key,
-            'pipeline': @pipeline,
-            'client-sdk': 'ruby',
-            'client-version': Doppler::VERSION
-
-        }
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-
-        begin
-            response = http.post(uri.path, body.to_json, header)
-            response_data = JSON.parse(response.body)
-            if response_data['success'] == false
-                raise RuntimeError, response_data["messages"].join(". ")
-            end
-        rescue => e
-            retry_count += 1
-
-            if retry_count > @max_retries
-                raise e
-            else
-                return _request(endpoint, body, retry_count)
-            end
-        end
-
-       return response_data
-    end
+  # helper to configure above variables.
+  def self.configure
+    yield(self)
   end
 end
