@@ -74,7 +74,7 @@ MAGICAL_KEY = "456"
 doppler.get("MAGICAL_KEY") # => "456"
 
 # Override to Local
-doppler.get("MAGICAL_KEY", Doppler::Priority.local) # => "123"
+doppler.get("MAGICAL_KEY", Doppler::PRIORITY_LOCAL) # => "123"
 ```
 
 You can also set the priority globally on initialization:
