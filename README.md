@@ -100,6 +100,8 @@ Doppler.configure do |config|
 end
 ```
 
+Example repo found [here](https://github.com/DopplerHQ/rails-sample).
+
 ## Local Key Privacy
 
 By default the Doppler client will only track the local environment keys that are used during `doppler.get()`.
