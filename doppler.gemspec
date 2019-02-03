@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "doppler/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "doppler-client"
+  spec.name          = "doppler"
   spec.version       = Doppler::VERSION
   spec.authors       = ["Doppler Team"]
   spec.email         = "brian@doppler.com"
