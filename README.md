@@ -68,29 +68,21 @@ in a `.env` file or with your infra provider. That means the only variables you 
 In the case you would want to ignore specific variables from Doppler, say a port set by Heroku, you can add it the `ignore_variables` field.
 
 ``` ruby
-require "doppler"
-
 Doppler.configure do |config|
   config.ignore_variables = ["PORT"]
 end
-
-Doppler::Client.new()
 ```
 
 ## Fallback to Backup
 
 The Doppler client accepts a `backup_filepath` on init. If provided the client will write
 the Doppler variables to a backup file. If the Doppler client fails to connect to our API
-endpoint (very unlikely), the client will fallback to the keys provided in the backup file.
+endpoint (very unlikely), the client will fallback to the variables provided in the backup file.
 
 ``` ruby
-from doppler_client import Doppler
-
 Doppler.configure do |config|
   config.backup_filepath = "./backup.env"
 end
-
-Doppler::Client.new()
 ```
 
 ## Extra Information
