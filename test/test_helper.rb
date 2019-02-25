@@ -1,18 +1,15 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+
+ENV['DOPPLER_API_KEY'] = "lK1obsC3Q1atBqAw5AoqXmLDXC77eigYqFZOlVz2"
+ENV["DOPPLER_PIPELINE"] = "31"
+ENV["DOPPLER_ENVIRONMENT"] = "development_ruby"
+
 require "doppler"
-require "minitest/autorun"
 
-ENV['TESTER'] = "123"
+Doppler.configure do |config|
+  config.backup_filepath = "./backup.env"
+end
 
-doppler = Doppler::Client.new(
-  api_key = "lK1obsC3Q1atBqAw5AoqXmLDXC77eigYqFZOlVz2",
-  pipeline = "31",
-  environment = "development_ruby",
-  priority = Doppler::Priority.remote,
-  track_keys = [],
-  ignore_keys = []
-)
+Doppler::Client.new()
 
-print(doppler.get("HELLO_WORLD") + "\n")
-print(doppler.get("TESTER") + "\n")
-print(doppler.get("MISSING_KEY"))
+print(ENV["TESTER"])

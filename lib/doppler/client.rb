@@ -1,6 +1,5 @@
 require 'net/https'
 require 'json'
-require 'set'
 require 'doppler/version'
 
 module Doppler
@@ -9,49 +8,56 @@ module Doppler
     ENVIRONMENT_SEGMENT = '/environments/'
 
     def initialize()
+      if Doppler.api_key.nil?
+        raise "Please provide a api key"
+      end
+      
+      if Doppler.pipeline.nil?
+        raise "Please provide a pipeline"
+      end
+      
+      
+      if Doppler.environment.nil?
+        raise "Please provide a environment"
+      end
+         
       startup()
     end
 
     def startup
-      local_keys = ENV.to_hash
-      keys_to_send = local_keys.select { |k, _| Doppler.track_keys.include?(k) }
-
-      resp = self._request('/fetch_keys', {
-                             'local_keys' => keys_to_send
-                           })
-
-      @remote_keys = resp['keys']
+      resp = self._request('/fetch_keys', {})
+      @remote_keys = resp.fetch("keys")
+      
+      overwrite_env()
+      write_to_backup()
     end
-
-    def get(key_name, priority = Doppler.priority)
-      value =
-        if priority == Doppler::PRIORITY_LOCAL
-          ENV[key_name] || @remote_keys[key_name]
-        else
-          @remote_keys[key_name] || ENV[key_name]
-        end
-
-      unless Doppler.ignore_keys.include?(key_name)
-        # TODO: Move this to a background job or thread once we get more customers!
-        upload_key_to_server(key_name, value)
+    
+    
+    def overwrite_env      
+      if @remote_keys.nil? 
+        return
       end
-
-      value
-    end
-
-    def upload_key_to_server(key_name, value)
-      if value
-        if ENV[key_name] != @remote_keys[key_name]
-          _request('/track_key', {
-                     'local_keys' => {key_name: ENV[key_name]}
-                   })
+      
+      @remote_keys.each do |key, value|        
+        unless Doppler.ignore_variables.include?(key)
+          ENV[key] = value
         end
-      else
-        _request('/missing_key', {
-                   'key_name' => key_name
-                 })
       end
     end
+    
+    
+    def write_to_backup
+      unless Doppler.backup_filepath.nil?
+        file = File.open(Doppler.backup_filepath, "w")
+        
+        @remote_keys.each do |key, value|
+          file.puts key + "=" + value
+        end
+        
+        file.close
+      end
+    end
+
 
     def _request(endpoint, body, retry_count=0)
       raise ArgumentError, 'endpoint not string' unless endpoint.is_a? String
@@ -75,11 +81,30 @@ module Doppler
         if response_data['success'] == false
           raise RuntimeError, response_data["messages"].join(". ")
         end
+        
       rescue => e
         retry_count += 1
 
         if retry_count > MAX_RETRIES
-          raise e
+          if Doppler.backup_filepath.nil? or !File.file?(Doppler.backup_filepath)
+            raise e
+          end
+          
+          keys = {}
+          File.open(Doppler.backup_filepath, "r") do |file|
+            file.each do |line| 
+              parts = line.strip!.split("=")
+              
+              if parts.length == 2
+                keys[parts[0]] = parts[1]
+              end
+            end
+          end
+          
+          data = {}
+          data["keys"] = keys
+          return data
+          
         else
           return _request(endpoint, body, retry_count)
         end

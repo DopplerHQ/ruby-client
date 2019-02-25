@@ -17,121 +17,80 @@ gem install doppler
 
 The package needs to be configured with your account's api key which is available in your [Doppler account](https://doppler.com/workplace/api_key), pipeline identifier and the environment name:
 
+
+### Environment Variables Required
+Please add these environment variables to your `.env` file or infra provider.
+
+```
+DOPPLER_API_KEY = <API Key>
+DOPPLER_PIPELINE = <Pipeline ID>
+DOPPLER_ENVIRONMENT = <Environment Name>
+```
+
+### Simple Install
+This installation method will expect the `DOPPLER_API_KEY`, `DOPPLER_PIPELINE`, `DOPPLER_ENVIRONMENT` as environment variables.
+
+``` ruby
+require "doppler"
+Doppler::Client.new()
+
+# Rest of Application
+```
+
+### Install with Arguments
+This installation method will expect the `api_key`, `pipeline`, `environment` as arguments.
+
 ``` ruby
 require "doppler"
 
 Doppler.configure do |config|
-  config.api_key = "api-key"
-  config.pipeline = "31"
-  config.environment = "development_ruby"
-  config.priority = Doppler::PRIORITY_REMOTE
+  config.api_key = ENV["DOPPLER_API_KEY"]
+  config.pipeline = ENV["DOPPLER_PIPELINE"]
+  config.environment = ENV["DOPPLER_ENVIRONMENT"]
 end
 
 
-doppler = Doppler::Client.new()
+Doppler::Client.new()
 
 # Rest of Application
 ```
 
 ## Key Best Practices
 
-So if Doppler stores my environment keys, where should I keep my Doppler API keys?
+So if Doppler stores my environment variables, where should I keep my Doppler API keys?
 
-That is a great question! We recommend storing your `API_KEY`, `PIPELINE_ID`, and `ENVIRONMENT_NAME`
-in local environment. That means the only keys you should be storing in your local environment are the Doppler keys. All other keys should be be fetched by the Doppler client.
+That is a great question! We recommend storing your `DOPPLER_API_KEY`, `DOPPLER_PIPELINE`, and `DOPPLER_ENVIRONMENT` 
+in a `.env` file or with your infra provider. That means the only variables you should be storing in your local environment are the Doppler keys. All other variables should be be fetched by the Doppler client.
 
-### Fetch Environment Keys
 
-You can fetch your environment keys from Doppler by calling the `get(name)` method.
+## Ignoring Specific Variables
 
-``` ruby
-doppler.get(KEY_NAME)
-```
-
-Here is an example:
+In the case you would want to ignore specific variables from Doppler, say a port set by Heroku, you can add it the `ignore_variables` field.
 
 ``` ruby
-config = {
-  "segment_key" => doppler.get("SEGMENT_API_KEY"),
-  "algolia_key" => doppler.get("ALGOLIA_API_KEY")
-}
+require "doppler"
 
-```
-
-If there are differences between the values your local environment sets and the ones on Doppler, the client will use the ones provided by Doppler. You can override this behavior by passing in a second argument to the `get(key_name, priority)` method that sets the priority to favor your local environment.
-
-For example:
-
-``` ruby
-# Local Enviroment
-os.environ["MAGICAL_KEY"] = "123"
-
-# Doppler
-MAGICAL_KEY = "456"
-
-
-# Default Behavior
-doppler.get("MAGICAL_KEY") # => "456"
-
-# Override to Local
-doppler.get("MAGICAL_KEY", Doppler::Priority.local) # => "123"
-```
-
-You can also set the priority globally on initialization:
-
-``` ruby
 Doppler.configure do |config|
-  # ...
-  config.priority = Doppler::PRIORITY_LOCAL
+  config.ignore_variables = ["PORT"]
 end
+
+Doppler::Client.new()
 ```
 
-## Rails integration
+## Fallback to Backup
 
-Configure `Doppler` with keys and environments, and then you should be all good.
-Please use the following snippet in initializer folder.
-
-```rb
-Doppler.configure do |config|
-  config.api_key = "api-key"
-  config.pipeline = "31"
-  config.environment = "development_ruby"
-  config.priority = Doppler::PRIORITY_REMOTE
-end
-```
-
-Example repo found [here](https://github.com/DopplerHQ/rails-sample).
-
-## Local Key Privacy
-
-By default the Doppler client will only track the local environment keys that are used during `doppler.get()`.
-Collecting only those local keys helps us automatically setup your pipelines
-for immediate use. After setup we also use your keys to detect when your keys locally have
-changed from what is on Doppler. We then provide a way for you to adopt or reject those changes
-through our dashboard. This can help help when debugging silent bugs or build failures.
-
-### Track Additional Keys
-The Doppler client can also track additional keys by providing an array of keys to the `track_keys` field.
+The Doppler client accepts a `backup_filepath` on init. If provided the client will write
+the Doppler variables to a backup file. If the Doppler client fails to connect to our API
+endpoint (very unlikely), the client will fallback to the keys provided in the backup file.
 
 ``` ruby
-Doppler.configure do |config|
-  # ...
-  config.track_keys = [
-    "KEY_TO_TRACK"
-  ]
-end
-```
+from doppler_client import Doppler
 
-### Ignoring Specific Keys
-Inversely, you can also ignore specific local keys by adding them to the `ignore_keys` array.
-
-``` ruby
 Doppler.configure do |config|
-  # ...
-  config.ignore_keys = [
-    "SUPER_SECRET_KEY"
-  ]
+  config.backup_filepath = "./backup.env"
 end
+
+Doppler::Client.new()
 ```
 
 ## Extra Information
