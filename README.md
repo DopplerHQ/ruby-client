@@ -1,5 +1,6 @@
 # Doppler Ruby Library
 
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/DopplerHQ/ruby-client)
 [![image](https://img.shields.io/gem/v/doppler-client.svg)](https://rubygems.org/gems/doppler-client)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/92ec3d37764c40da8dffb6a85c6cbfa4)](https://www.codacy.com/app/Doppler/ruby-client?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DopplerHQ/ruby-client&amp;utm_campaign=Badge_Grade)
 
