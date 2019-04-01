@@ -2,7 +2,7 @@ require 'doppler/client'
 
 module Doppler
   # configure doppler host url
-  @@host_url = "https://api.doppler.com"
+  @@host_url = "https://deploy.doppler.com"
   def self.host_url=(host)
     @@host_url = host_url
   end

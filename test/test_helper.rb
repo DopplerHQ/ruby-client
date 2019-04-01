@@ -12,4 +12,4 @@ end
 
 Doppler::Client.new()
 
-print(ENV["TESTER"])
+print(ENV["TESTER"] + "\n")

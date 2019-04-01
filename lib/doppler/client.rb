@@ -5,7 +5,6 @@ require 'doppler/version'
 module Doppler
   class Client
     MAX_RETRIES = 10
-    ENVIRONMENT_SEGMENT = '/environments/'
 
     def initialize()
       if Doppler.api_key.nil?
@@ -25,8 +24,8 @@ module Doppler
     end
 
     def startup
-      resp = self._request('/fetch_keys', {})
-      @remote_keys = resp.fetch("keys")
+      resp = self._request('/v1/variables')
+      @remote_keys = resp.fetch("variables")
       
       overwrite_env()
       write_to_backup()
@@ -59,24 +58,26 @@ module Doppler
     end
 
 
-    def _request(endpoint, body, retry_count=0)
+    def _request(endpoint, retry_count=0)
       raise ArgumentError, 'endpoint not string' unless endpoint.is_a? String
 
-      raw_url = Doppler.host_url + ENVIRONMENT_SEGMENT + Doppler.environment + endpoint
-      uri = URI.parse(raw_url)
+      uri = URI.parse(Doppler.host_url + endpoint)
+      uri.query = URI.encode_www_form({
+        'pipeline': Doppler.pipeline,
+        'environment': Doppler.environment
+      })
       header = {
         'Content-Type': 'application/json',
         'api-key': Doppler.api_key,
-        'pipeline': Doppler.pipeline,
         'client-sdk': 'ruby',
         'client-version': Doppler::VERSION
-
       }
-      http = ::Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
 
       begin
-        response = http.post(uri.path, body.to_json, header)
+        request = Net::HTTP::Get.new(uri, header)
+        response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) {|http|
+          http.request(request)
+        }
         response_data = JSON.parse(response.body)
         if response_data['success'] == false
           raise RuntimeError, response_data["messages"].join(". ")
@@ -102,11 +103,11 @@ module Doppler
           end
           
           data = {}
-          data["keys"] = keys
+          data["variables"] = keys
           return data
           
         else
-          return _request(endpoint, body, retry_count)
+          return _request(endpoint, retry_count)
         end
       end
 
