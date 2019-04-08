@@ -20,7 +20,7 @@ The package needs to be configured with your account's api key which is availabl
 
 
 ### Environment Variables Required
-Please add these environment variables to your `.env` file or infra provider.
+Please add these environment variables to your `.env` file in the root directory or on your infra provider.
 
 ```
 DOPPLER_API_KEY = <API Key>
@@ -28,11 +28,35 @@ DOPPLER_PIPELINE = <Pipeline ID>
 DOPPLER_ENVIRONMENT = <Environment Name>
 ```
 
-### Simple Install
+### Lookup Priority
+Doppler will look for these variables in 3 places with the following priority:
+
+1. Passed in as initialization arguments
+2. Read from environment variables
+3. Read from `.env` file
+
+
+### Install with Environment Variables
 This installation method will expect the `DOPPLER_API_KEY`, `DOPPLER_PIPELINE`, `DOPPLER_ENVIRONMENT` as environment variables.
 
 ``` ruby
 require "doppler"
+Doppler::Client.new()
+
+# Rest of Application
+```
+
+### Install with ENV File
+This installation method will expect the `DOPPLER_API_KEY`, `DOPPLER_PIPELINE`, `DOPPLER_ENVIRONMENT` in a `.env` file.
+
+``` ruby
+require "doppler"
+
+Doppler.configure do |config|
+  config.env_filepath = ".env"   # Defaults to ".env"
+end
+
+
 Doppler::Client.new()
 
 # Rest of Application

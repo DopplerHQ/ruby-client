@@ -87,23 +87,14 @@ module Doppler
         retry_count += 1
 
         if retry_count > MAX_RETRIES
-          if Doppler.backup_filepath.nil? or !File.file?(Doppler.backup_filepath)
+          backup_env = Doppler.read_env(Doppler.backup_filepath)
+          
+          if backup_env.nil?
             raise e
           end
           
-          keys = {}
-          File.open(Doppler.backup_filepath, "r") do |file|
-            file.each do |line| 
-              parts = line.strip!.split("=")
-              
-              if parts.length == 2
-                keys[parts[0]] = parts[1]
-              end
-            end
-          end
-          
           data = {}
-          data["variables"] = keys
+          data["variables"] = backup_env
           return data
           
         else

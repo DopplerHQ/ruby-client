@@ -54,10 +54,44 @@ module Doppler
   def self.backup_filepath
     @@backup_filepath
   end
+  
+  # configure env file
+  @@env_filepath = ".env"
+  def self.env_filepath=(env_filepath)
+    @@env_filepath = env_filepath
+  end
+  def self.env_filepath
+    @@env_filepath
+  end
+  
+  # read env file
+  def self.read_env(path)
+    if path.nil? or !File.file?(path)
+      return nil
+    end
+    
+    keys = {}
+    File.open(path, "r") do |file|
+      file.each do |line|
+        parts = line.strip.split("=")
+        
+        if parts.length == 2
+          keys[parts[0].strip] = parts[1].strip
+        end
+      end
+    end
+    
+    return keys
+  end
 
   # helper to configure above variables.
   def self.configure
     yield(self)
+    
+    env_file = self.read_env(self.env_filepath) || {}
+    self.api_key = self.api_key || env_file["DOPPLER_API_KEY"]
+    self.pipeline = self.pipeline || env_file["DOPPLER_PIPELINE"]
+    self.environment = self.environment || env_file["DOPPLER_ENVIRONMENT"]
   end
   
 end
