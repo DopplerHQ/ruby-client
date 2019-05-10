@@ -46,6 +46,15 @@ module Doppler
     @@ignore_variables
   end
   
+  # configure override
+  @@override = true
+  def self.override=(override)
+    @@override = override
+  end
+  def self.override
+    @@override
+  end
+  
   # configure backup file
   @@backup_filepath = nil
   def self.backup_filepath=(backup_filepath)

@@ -26,9 +26,11 @@ module Doppler
     def startup
       resp = self._request('/v1/variables')
       @remote_keys = resp.fetch("variables")
-      
-      overwrite_env()
       write_to_backup()
+      
+      if Doppler.override
+        overwrite_env()
+      end
     end
     
     
@@ -55,6 +57,11 @@ module Doppler
         
         file.close
       end
+    end
+    
+    
+    def get(name)
+      return @remote_keys.fetch(name)
     end
 
 

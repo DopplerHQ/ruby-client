@@ -7,9 +7,10 @@ ENV["DOPPLER_ENVIRONMENT"] = "development_ruby"
 require "doppler"
 
 Doppler.configure do |config|
-  config.backup_filepath = "./backup.env"
+  config.override = true;
 end
 
-Doppler::Client.new()
+doppler = Doppler::Client.new()
 
+print(doppler.get("TESTER") + "\n")
 print(ENV["TESTER"] + "\n")
