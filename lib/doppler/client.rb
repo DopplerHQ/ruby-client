@@ -63,7 +63,10 @@ module Doppler
     def get(name)
       return @remote_keys.fetch(name)
     end
-
+    
+    def get_all
+      return @remote_keys
+    end
 
     def _request(endpoint, retry_count=0)
       raise ArgumentError, 'endpoint not string' unless endpoint.is_a? String
