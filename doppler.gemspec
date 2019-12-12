@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Doppler Team"]
   spec.email         = "brian@doppler.com"
 
-  spec.summary       = "The official Doppler Ruby client."
-  spec.description   = "Doppler helps you manage your API keys and secrets across all your projects. See https://doppler.com for details."
-  spec.homepage      = "https://github.com/DopplerHQ/ruby-client"
+  spec.summary       = "Deprecated Doppler Ruby client."
+  spec.description   = "DEPRECATED - Use the new Doppler CLI. See https://docs.doppler.com/docs/enclave-installation for details."
+  spec.homepage      = "https://docs.doppler.com/docs/enclave-installation"
   spec.licenses      = "Apache-2.0"
 
   # Specify which files should be added to the gem when it is released.
