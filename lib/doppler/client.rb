@@ -10,16 +10,17 @@ module Doppler
       if Doppler.api_key.nil?
         raise "Please provide a api key"
       end
-      
+
       if Doppler.pipeline.nil?
         raise "Please provide a pipeline"
       end
-      
-      
+
+
       if Doppler.environment.nil?
         raise "Please provide a environment"
       end
-         
+
+      print "DEPRECATED: Please use the new CLI at https://docs.doppler.com/docs/enclave-installation\n\n"
       startup()
     end
 
