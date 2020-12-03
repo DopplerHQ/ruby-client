@@ -1,7 +1,6 @@
-# DEPRECATED
-The new Doppler CLI is exceptionally light and fast, and is provided as a binary to support environments without `node`.
-Migrate today by visiting our [installation documentation](https://docs.doppler.com/docs/enclave-installation).
+# DEPRECATED AND SCHEDULED FOR REMOVAL FROM RUBYGEMS JANUARY 15, 2021
 
+The [doppler](https://rubygems.org/gems/doppler) and [doppler-client](https://rubygems.org/gems/doppler-client) packages are deprecated and **scheduled for removal from RubyGems** on January 15, 2021. Learn how to [migrate to the new CLI](https://docs.doppler.com/docs/saying-goodbye-to-the-doppler-client-packages-node-cli).
 
 # Doppler Ruby Library
 
