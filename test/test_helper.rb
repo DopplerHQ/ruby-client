@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 
+# this is an example API Key and is not valid
 ENV['DOPPLER_API_KEY'] = "lK1obsC3Q1atBqAw5AoqXmLDXC77eigYqFZOlVz2"
 ENV["DOPPLER_PIPELINE"] = "31"
 ENV["DOPPLER_ENVIRONMENT"] = "development_ruby"
